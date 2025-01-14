@@ -4,7 +4,7 @@ import mongoose, { Document, Model,model,models } from 'mongoose';
 @Schema()
 export class Craft extends Document {
     @Prop({ required: true })
-    craft: string;
+    name: string;
 
     @Prop({ required: true })
     area: string;

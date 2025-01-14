@@ -1,6 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { CreateCraftDto } from './dto/create-craft.dto';
-import { UpdateCraftDto } from './dto/update-craft.dto';
 import { Craft } from './models/craft.model';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';

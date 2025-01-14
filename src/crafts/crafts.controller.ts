@@ -1,13 +1,16 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode, HttpException, HttpStatus } from '@nestjs/common';
 import { CraftsService } from './crafts.service';
-import { CreateCraftDto } from './dto/create-craft.dto';
-import { UpdateCraftDto } from './dto/update-craft.dto';
 import { Craft } from './models/craft.model';
 
 @Controller('crafts')
 export class CraftsController {
   constructor(private readonly craftsService: CraftsService) {}
 
+  @Get()
+  getAllCrafts() {
+    return this.craftsService.findAll();
+  }
+  
   @Post('create')
   @HttpCode(200)
   create(@Body() data: Craft) {
@@ -20,10 +23,6 @@ export class CraftsController {
     }
   }
 
-  @Get()
-  findAll() {
-    return this.craftsService.findAll();
-  }
 
   
 }
