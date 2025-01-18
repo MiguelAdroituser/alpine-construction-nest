@@ -23,6 +23,17 @@ export class CraftsController {
     }
   }
 
+  @Patch(':id')
+  async update(@Param('id') id: string, @Body() updatedCraftData: Partial<Craft>){
+    try{
+        // const update=await this.mealService.updateMeal(id,updatedCraftData);
+        const update=await this.craftsService.update(id,updatedCraftData);
+        return update;
+    }catch(error){
+        throw new HttpException({message:'Error al actualizar'}, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
 
   
 }

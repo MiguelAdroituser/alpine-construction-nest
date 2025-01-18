@@ -24,7 +24,7 @@ export class CraftsService {
     return `This action returns a #${id} craft`;
   }
 
-  async update(id: number, updateCraftDto: Partial<Craft>): Promise<Craft> {
+  async update(id: string, updateCraftDto: Partial<Craft>): Promise<Craft> {
     const updateCraft = await this.craftModel.findByIdAndUpdate(id, updateCraftDto, { new: true });
     return updateCraft;
   }
