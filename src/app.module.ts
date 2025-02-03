@@ -8,6 +8,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { EnvConfiguration } from './config/app.config';
 import { CraftsModule } from './crafts/crafts.module';
 import { AreasModule } from './areas/areas.module';
+import { CustomersModule } from './customers/customers.module';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { AreasModule } from './areas/areas.module';
     AuthModule,
     CraftsModule,
     AreasModule,
+    CustomersModule,
     // SessionModule,
   ],
   controllers: [],
