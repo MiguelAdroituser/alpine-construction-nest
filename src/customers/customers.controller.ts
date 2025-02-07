@@ -1,6 +1,7 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode } from '@nestjs/common';
 import { CustomersService } from './customers.service';
 import { Customer } from './models/customer.model';
+import { Types } from 'mongoose';
 
 @Controller('customers')
 export class CustomersController {
@@ -15,10 +16,11 @@ export class CustomersController {
   @HttpCode(200)
   create(@Body() data: Customer) {
     try {
+      data.userId = new Types.ObjectId("6782f0e0cd83fe59be890d5e");
       delete data['_id'];
       return this.customersService.create(data);
     } catch (error) {
-      
+      throw error;
     }
   }
 
