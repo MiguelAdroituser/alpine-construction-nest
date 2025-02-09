@@ -1,5 +1,4 @@
 
-
 /* 
 
 Room - int
@@ -21,9 +20,14 @@ Cantidad mx - int
 */
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { Document, Model } from 'mongoose';
+import { Customer } from 'src/customers/models/customer.model';
 
 @Schema()
 export class Area extends Document {
+
+    @Prop({ type: mongoose.Schema.Types.ObjectId, ref: Customer.name, required: true })
+    customerId: mongoose.Types.ObjectId; //It contains the customer Id and project Id.
+
     @Prop({ required: true })
     room: number;
 

@@ -1,6 +1,7 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode, HttpException, HttpStatus } from '@nestjs/common';
 import { AreasService } from './areas.service';
 import { Area } from './models/area.model';
+import { Types } from 'mongoose';
 
 @Controller('areas')
 export class AreasController {
@@ -11,10 +12,13 @@ export class AreasController {
     return this.areasService.findAll();
   }
 
-  /* @Post('create')
+   @Post('create')
   @HttpCode(200)
   create(@Body() data: Area) {
     try {
+      const { customerId } = data;
+      //Parse string to ObjectId
+      data.customerId = new Types.ObjectId(customerId)
       delete data['_id'];
 
       return this.areasService.create(data);
@@ -24,7 +28,7 @@ export class AreasController {
     }
   }
 
-
+  /*
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.areasService.findOne(+id);
