@@ -24,7 +24,11 @@ export class AreasService {
   } 
 
   findAll() {
-    return `This action returns all areas`;
+    return this.areaModel.find();
+  }
+
+  async findByCustomerId(customerId: Types.ObjectId) {
+    return this.areaModel.find({ customerId }).exec();
   }
 
   findOne(id: number) {

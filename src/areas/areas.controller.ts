@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode, HttpException, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode, HttpException, HttpStatus, Query } from '@nestjs/common';
 import { AreasService } from './areas.service';
 import { Area } from './models/area.model';
 import { Types } from 'mongoose';
@@ -8,9 +8,27 @@ export class AreasController {
   constructor(private readonly areasService: AreasService) {}
 
   @Get()
-  getAllAreas() {
-    return this.areasService.findAll();
+async getAreas(@Query('customerId') customerId?: string) {
+  try {
+    if (customerId) {
+      const objectId = new Types.ObjectId(customerId);
+      return await this.areasService.findByCustomerId(objectId);
+    }
+    return await this.areasService.findAll(); // Return all areas if no customerId is provided
+  } catch (error) {
+    throw new HttpException('Invalid customerId format', HttpStatus.BAD_REQUEST);
   }
+}
+
+  @Get(':customerId')
+async getAreasByCustomerId(@Param('customerId') customerId: string) {
+  try {
+    const objectId = new Types.ObjectId(customerId);
+    return await this.areasService.findByCustomerId(objectId);
+  } catch (error) {
+    throw new HttpException('Invalid customerId format', HttpStatus.BAD_REQUEST);
+  }
+}
 
    @Post('create')
   @HttpCode(200)
