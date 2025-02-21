@@ -12,6 +12,9 @@ export class Craft extends Document {
     @Prop({ required: true })
     price: number;
 
+    @Prop({ required: true })
+    priceMax: number;
+
     @Prop({ required: false })
     Dimensions: string; //tamano de instalacion
 
