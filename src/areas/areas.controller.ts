@@ -21,22 +21,24 @@ async getAreas(@Query('customerId') customerId?: string) {
 }
 
   @Get(':customerId')
-async getAreasByCustomerId(@Param('customerId') customerId: string) {
-  try {
-    const objectId = new Types.ObjectId(customerId);
-    return await this.areasService.findByCustomerId(objectId);
-  } catch (error) {
-    throw new HttpException('Invalid customerId format', HttpStatus.BAD_REQUEST);
+  async getAreasByCustomerId(@Param('customerId') customerId: string) {
+    try {
+      const objectId = new Types.ObjectId(customerId);
+      return await this.areasService.findByCustomerId(objectId);
+    } catch (error) {
+      throw new HttpException('Invalid customerId format', HttpStatus.BAD_REQUEST);
+    }
   }
-}
 
-   @Post('create')
+  @Post('create')
   @HttpCode(200)
   create(@Body() data: Area) {
     try {
-      const { customerId } = data;
+      const { customerId, craftId } = data;
       //Parse string to ObjectId
       data.customerId = new Types.ObjectId(customerId)
+      data.craftId = new Types.ObjectId(craftId)
+
       delete data['_id'];
 
       return this.areasService.create(data);

@@ -20,6 +20,7 @@ Cantidad mx - int
 */
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { Document, Model } from 'mongoose';
+import { Craft } from 'src/crafts/models/craft.model';
 import { Customer } from 'src/customers/models/customer.model';
 
 @Schema()
@@ -27,6 +28,9 @@ export class Area extends Document {
 
     @Prop({ type: mongoose.Schema.Types.ObjectId, ref: Customer.name, required: true })
     customerId: mongoose.Types.ObjectId; //It contains the customer Id and project Id.
+
+    @Prop({ type: mongoose.Schema.Types.ObjectId, ref: Craft.name, required: true }) // ✅ Reference to Craft
+    craftId: mongoose.Types.ObjectId; 
 
     @Prop({ required: true })
     room: number;

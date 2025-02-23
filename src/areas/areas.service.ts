@@ -10,9 +10,13 @@ export class AreasService {
   async create(area: Area) {
     try {
       
-      // Verifica si el userId es un ObjectId válido
+      // Verifica si el userId es un customerId válido
       if (!Types.ObjectId.isValid(area.customerId)) {
-        throw new BadRequestException('Invalid userId format');
+        throw new BadRequestException('Invalid customerId format');
+      }
+      
+      if (!Types.ObjectId.isValid(area.craftId)) {
+        throw new BadRequestException('Invalid craftId format');
       }
 
       const newArea = new this.areaModel(area);
