@@ -39,9 +39,10 @@ export class AreasService {
     return `This action returns a #${id} area`;
   }
 
-  /* update(id: number, updateAreaDto: UpdateAreaDto) {
-    return `This action updates a #${id} area`;
-  } */
+  async update(id: string, updateAreaDto: Partial<Area>): Promise<Area> {
+    const updateArea = await this.areaModel.findByIdAndUpdate(id, updateAreaDto, { new: true });
+    return updateArea;
+  }
 
   remove(id: number) {
     return `This action removes a #${id} area`;
