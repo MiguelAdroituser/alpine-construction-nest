@@ -76,6 +76,38 @@ export class Area extends Document {
 
     @Prop({ required: true })
     cantidadMx: number;
+
+    //new properties
+    @Prop({ required: true, type: Boolean, default: false })
+    checkbox_Straight: boolean;
+
+    @Prop({ required: true, type: Boolean, default: false })
+    checkbox_45_Angle: boolean;
+
+    @Prop({ required: true, type: Boolean, default: false })
+    checkbox_Brick: boolean;
+
+    @Prop({ required: true, type: Boolean, default: false })
+    checkbox_Random: boolean;
+
+    @Prop({ required: true, type: Boolean, default: false })
+    checkbox_Designs: boolean;
+
+    @Prop({ required: true, type: Boolean, default: false })
+    checkbox_Medalions: boolean;
+
+    @Prop({ required: true, type: Boolean, default: false })
+    checkbox_Heated_Floors: boolean;
+
+    @Prop({ required: true, type: Boolean, default: false })
+    checkbox_Steam_Showers: boolean;
+
+    @Prop({ required: true, type: Boolean, default: false })
+    checkbox_Shower_Pan: boolean;
+
+    @Prop({ required: true, type: Boolean, default: false })
+    checkbox_Benches: boolean;
+
 }
 
 export const AreaSchema = (mongoose.models.Area || SchemaFactory.createForClass(Area)) as Model<Area>;
