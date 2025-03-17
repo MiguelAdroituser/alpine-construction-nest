@@ -9,6 +9,7 @@ import { EnvConfiguration } from './config/app.config';
 import { CraftsModule } from './crafts/crafts.module';
 import { AreasModule } from './areas/areas.module';
 import { CustomersModule } from './customers/customers.module';
+import { ProjectsModule } from './projects/projects.module';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { CustomersModule } from './customers/customers.module';
     CraftsModule,
     AreasModule,
     CustomersModule,
+    ProjectsModule,
     // SessionModule,
   ],
   controllers: [],

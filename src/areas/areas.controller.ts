@@ -9,6 +9,7 @@ export class AreasController {
 
   @Get()
 async getAreas(@Query('customerId') customerId?: string) {
+  //TODO: agregar el projectId, se filtrara por proyecto y customer
   try {
     if (customerId) {
       const objectId = new Types.ObjectId(customerId);
@@ -21,6 +22,7 @@ async getAreas(@Query('customerId') customerId?: string) {
 }
 
   @Get(':customerId')
+  //TODO: agregar el projectId, se filtrara por proyecto y customer
   async getAreasByCustomerId(@Param('customerId') customerId: string) {
     try {
       const objectId = new Types.ObjectId(customerId);
@@ -33,6 +35,7 @@ async getAreas(@Query('customerId') customerId?: string) {
   @Post('create')
   @HttpCode(200)
   create(@Body() data: Area) {
+    //TODO: agregar el projectId, se filtrara por proyecto y customer
     try {
       const { customerId, craftId } = data;
       //Parse string to ObjectId
