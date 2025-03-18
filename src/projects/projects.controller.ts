@@ -20,10 +20,11 @@ export class ProjectsController {
       }
   }
 
-  @Post()
+  @Post('create')
   create(@Body() data: Project) {
     try {
       const { customerId } = data;
+      data.userId = new Types.ObjectId("6782f0e0cd83fe59be890d5e");
       //Parse string to ObjectId
       data.customerId = new Types.ObjectId(customerId)
 
