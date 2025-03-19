@@ -15,15 +15,6 @@ export class Craft extends Document {
     @Prop({ required: true })
     priceMax: number;
 
-    @Prop({ required: false })
-    Dimensions: string; //tamano de instalacion
-
-    @Prop({ required: false })
-    materialUsed: string;//materiales que se utilizaran
-
-    @Prop({ required: false })
-    leadTime: string; //duración del proyecto
-
     @Prop({ required: true })
     description: string;
 }
