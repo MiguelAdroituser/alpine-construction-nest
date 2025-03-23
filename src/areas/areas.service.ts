@@ -35,6 +35,11 @@ export class AreasService {
     return this.areaModel.find({ customerId }).exec();
   }
 
+  async findByFilters(filters: any) {
+    return this.areaModel.find(filters).exec();
+  }
+  
+
   findOne(id: number) {
     return `This action returns a #${id} area`;
   }

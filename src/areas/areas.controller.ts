@@ -5,21 +5,37 @@ import { Types } from 'mongoose';
 
 @Controller('areas')
 export class AreasController {
-  constructor(private readonly areasService: AreasService) {}
+  constructor(private readonly areasService: AreasService) { }
 
   @Get()
-async getAreas(@Query('customerId') customerId?: string) {
-  //TODO: agregar el projectId, se filtrara por proyecto y customer
-  try {
-    if (customerId) {
-      const objectId = new Types.ObjectId(customerId);
-      return await this.areasService.findByCustomerId(objectId);
+  async getAreas(
+    @Query('customerId') customerId?: string,
+    @Query('projectId') projectId?: string
+  ) {
+    //TODO: agregar el projectId, se filtrara por proyecto y customer
+    try {
+      const filters: any = {}; // Initialize an empty filter object
+
+      if (customerId) {
+        filters.customerId = new Types.ObjectId(customerId);
+      }
+      if (projectId) {
+        filters.projectId = new Types.ObjectId(projectId);
+      }
+
+      if (Object.keys(filters).length > 0) {
+        return await this.areasService.findByFilters(filters); // Use the new dynamic filter function
+      }
+
+      /* if (customerId) {
+        const objectId = new Types.ObjectId(customerId);
+        return await this.areasService.findByCustomerId(objectId);
+      } */
+      return await this.areasService.findAll(); // Return all areas if no customerId is provided
+    } catch (error) {
+      throw new HttpException('Invalid customerId format', HttpStatus.BAD_REQUEST);
     }
-    return await this.areasService.findAll(); // Return all areas if no customerId is provided
-  } catch (error) {
-    throw new HttpException('Invalid customerId format', HttpStatus.BAD_REQUEST);
   }
-}
 
   @Get(':customerId')
   //TODO: agregar el projectId, se filtrara por proyecto y customer
@@ -37,10 +53,11 @@ async getAreas(@Query('customerId') customerId?: string) {
   create(@Body() data: Area) {
     //TODO: agregar el projectId, se filtrara por proyecto y customer
     try {
-      const { customerId, craftId } = data;
+      const { customerId, craftId, projectId } = data;
       //Parse string to ObjectId
       data.customerId = new Types.ObjectId(customerId)
       data.craftId = new Types.ObjectId(craftId)
+      data.projectId = new Types.ObjectId(projectId); 
 
       delete data['_id'];
 
@@ -51,13 +68,13 @@ async getAreas(@Query('customerId') customerId?: string) {
     }
   }
 
-  
-  
+
+
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateAreaDto: Partial<Area>) {
     return this.areasService.update(id, updateAreaDto);
   }
-  
+
   /*
   @Get(':id')
   findOne(@Param('id') id: string) {
