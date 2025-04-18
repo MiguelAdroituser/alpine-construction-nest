@@ -24,8 +24,8 @@ export class Customer extends Document {
     @Prop({ required: false })
     customerName: string;
 
-    @Prop({ required: true })
-    projectName: string;
+    /* @Prop({ required: true })
+    projectName: string; */
 
     @Prop({ type: mongoose.Schema.Types.ObjectId, ref: User.name, required: true })
     userId: mongoose.Types.ObjectId;

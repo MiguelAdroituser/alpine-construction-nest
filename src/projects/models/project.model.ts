@@ -16,6 +16,9 @@ export class Project extends Document {
     projectName: string;
 
     @Prop({ required: true })
+    location: string;
+
+    @Prop({ required: true })
     registrationDate: Date;
 }
 
