@@ -39,6 +39,11 @@ export class AreasService {
     return this.areaModel.find(filters).exec();
   }
   
+  async generateBudgetPdf(data: any) {
+    // Placeholder logic for generating PDF
+    return { message: 'Budget PDF generation not implemented yet', input: data };
+  }
+  
 
   findOne(id: number) {
     return `This action returns a #${id} area`;

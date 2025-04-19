@@ -69,6 +69,19 @@ export class AreasController {
   }
 
 
+  @Post('budget-pdf')
+  @HttpCode(200)
+  async generateBudgetPdf(@Body() data: any) {
+    try {
+      // Placeholder logic
+      return await this.areasService.generateBudgetPdf(data); // You’ll implement this in the service
+    } catch (error) {
+      throw new HttpException(
+        { message: 'Error generating budget PDF' },
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
+    }
+  }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateAreaDto: Partial<Area>) {
