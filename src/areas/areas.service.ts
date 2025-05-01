@@ -41,6 +41,33 @@ export class AreasService {
   
   async generateBudgetPdf(data: any) {
     // Placeholder logic for generating PDF
+
+    // console.log('budget-pdf service', data.areas)
+
+    // NOTAS:
+    // 1.- Realizar sumatoria total por craft (Tile, Paint, etc.)
+    // 2.- Realizar la sumatorial final El gran total.
+
+    /* Crafts of the building. */ //Name of the building (Nombre del proyecto)
+    // JSON = [{craft: Tile, total: 12938}, {craft: Paint, total: 12938}, ]
+
+    const craftOfBuilding = Object.values(
+      data.areas.reduce((acc, item) => {
+        if (!acc[item.craft]) {
+          acc[item.craft] = { craft: item.craft, total: 0 };
+        }
+        // acc[item.craft].total += item.amount;
+        acc[item.craft].total += item.total;
+        return acc;
+      }, {} as Record<string, { craft: string; total: number }>)
+    );
+
+    const grandTotal = craftOfBuilding.reduce((sum, item:any) => sum + item.total, 0);
+
+
+    console.log('craftOfBuilding', craftOfBuilding);
+    console.log('grandTotal', grandTotal);
+
     return { message: 'Budget PDF generation not implemented yet', input: data };
   }
   

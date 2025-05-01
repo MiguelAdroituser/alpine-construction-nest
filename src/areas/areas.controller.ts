@@ -74,6 +74,7 @@ export class AreasController {
   async generateBudgetPdf(@Body() data: any) {
     try {
       // Placeholder logic
+      console.log('budget-pdf controller')
       return await this.areasService.generateBudgetPdf(data); // You’ll implement this in the service
     } catch (error) {
       throw new HttpException(
