@@ -1,12 +1,13 @@
 import { Injectable } from "@nestjs/common/decorators";
 import { InjectModel } from "@nestjs/mongoose";
-import { User,UserSchema } from "../models/user.model";
+import { User, UserSchema } from "../models/user.model";
 import { isValidObjectId, Model, Types } from "mongoose";
 import * as bcrypt from 'bcrypt';
 import { BadRequestException, InternalServerErrorException, NotFoundException, UnauthorizedException } from "@nestjs/common";
 @Injectable()
 export class UserService{
     constructor(@InjectModel(User.name)private userModel:Model<User>){
+    // constructor(@InjectModel(User.name) private userModel: Model<UserDocument>){
 
     }
     async getUser(user:User):Promise<User>{
@@ -27,20 +28,23 @@ export class UserService{
           return u;
         
     }
-     // Método para crear un nuevo usuario y guardarlo en la base de datos
-     async createUser(user: User): Promise<User> {
-      // Hashear la contraseña antes de guardar el usuario
-      const saltRounds = 10;  // Número de saltos (rounds) para bcrypt
+    
+    async createUser(user: Partial<User>): Promise<User> {
+      const saltRounds = 10;
       const hashedPassword = await bcrypt.hash(user.password, saltRounds);
       
-      // Crear un nuevo usuario utilizando el modelo de Mongoose
-      const newUser = new this.userModel({
+      try {
+        const newUser = new this.userModel({
           username: user.username,
-          password: hashedPassword,  // Guardar la contraseña hasheada
-      });
-
-      // Guardar el usuario en la base de datos
-      return newUser.save();
+          password: hashedPassword,
+          isAdmin: user.isAdmin ?? false,
+        });
+        
+        return await newUser.save();
+      } catch (error) {
+        // You can add additional error handling here if needed
+        throw error; // Let the controller handle it
+      }
     }
 
     async getAllUsers(): Promise<Partial<User>[]> {
