@@ -32,11 +32,14 @@ export class AuthController {
             // await this.sessionsService.createSession(user._id, accessToken, 'http');
             // await this.sessionsService.createSession(userIdString, accessToken, 'http');
 
-            const { isAdmin } = user;
+            console.log({user})
+
+            const { isAdmin, username } = user;
             // Devuelve el accessToken y el userId
             return {
                 accessToken,
-                isAdmin
+                isAdmin,
+                username
             };
         }
 
