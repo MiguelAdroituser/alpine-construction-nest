@@ -10,6 +10,7 @@ import { CraftsModule } from './crafts/crafts.module';
 import { AreasModule } from './areas/areas.module';
 import { CustomersModule } from './customers/customers.module';
 import { ProjectsModule } from './projects/projects.module';
+import { MaterialsModule } from './materials/materials.module';
 
 @Module({
   imports: [
@@ -40,6 +41,7 @@ import { ProjectsModule } from './projects/projects.module';
     AreasModule,
     CustomersModule,
     ProjectsModule,
+    MaterialsModule,
     // SessionModule,
   ],
   controllers: [],
