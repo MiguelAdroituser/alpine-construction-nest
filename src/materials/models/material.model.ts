@@ -66,6 +66,7 @@ export class Material extends Document {
 
   @Prop({ required: true })
   layout: string;
+  
 }
 
 export const MaterialSchema = (mongoose.models.Material || SchemaFactory.createForClass(Material)) as Model<Material>;

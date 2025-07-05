@@ -9,8 +9,18 @@ export class MaterialsController {
 
   @Post('create')
   @HttpCode(200)
-  create(@Body() material: Material) {
-    return this.materialsService.create(material);
+  create(@Body() data: Material) {
+    try {
+      const { customerId, projectId } = data;
+      data.customerId = new Types.ObjectId(customerId);
+      data.projectId = new Types.ObjectId(projectId);
+
+      delete data['_id'];
+
+      return this.materialsService.create( data );
+    } catch (error) {
+      throw new HttpException({ message: 'Error al guardar' }, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
   @Get()
@@ -44,18 +54,18 @@ export class MaterialsController {
     }
   }
 
-  @Get(':id')
+  /* @Get(':id')
   findOne(@Param('id') id: string) {
     return this.materialsService.findOne(+id);
-  }
-
-  /* @Patch(':id')
-  update(@Param('id') id: string, @Body() updateMaterialDto: UpdateMaterialDto) {
-    return this.materialsService.update(+id, updateMaterialDto);
   } */
 
-  @Delete(':id')
+  @Patch(':id')
+  update(@Param('id') id: string, @Body() updateMaterialDto: Partial<Material>) {
+    return this.materialsService.update(id, updateMaterialDto);
+  }
+
+  /* @Delete(':id')
   remove(@Param('id') id: string) {
     return this.materialsService.remove(+id);
-  }
+  } */
 }

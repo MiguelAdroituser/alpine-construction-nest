@@ -5,7 +5,7 @@ import { Model, Types } from 'mongoose';
 
 @Injectable()
 export class MaterialsService {
-  constructor(@InjectModel(Material.name) private areaModel: Model<Material>){}
+  constructor(@InjectModel(Material.name) private materialModel: Model<Material>){}
   
   async create(material: Material) {
     try {
@@ -19,8 +19,8 @@ export class MaterialsService {
             throw new BadRequestException('Invalid craftId format');
           } */
     
-          const newArea = new this.areaModel(material);
-          return await newArea.save();
+          const newMaterial = new this.materialModel(material);
+          return await newMaterial.save();
     
         } catch (error) {
           throw error;
@@ -32,16 +32,17 @@ export class MaterialsService {
   }
 
   async findByFilters(filters: any) {
-  return this.areaModel.find(filters).exec();
+  return this.materialModel.find(filters).exec();
   }
 
   findOne(id: number) {
     return `This action returns a #${id} material`;
   }
 
-  /* update(id: number, updateMaterialDto: UpdateMaterialDto) {
-    return `This action updates a #${id} material`;
-  } */
+  async update(id: string, updateMaterialDto: Partial<Material>) {
+    const updateMaterial = await this.materialModel.findByIdAndUpdate(id, updateMaterialDto, { new: true });
+    return updateMaterial;
+  }
 
   remove(id: number) {
     return `This action removes a #${id} material`;
