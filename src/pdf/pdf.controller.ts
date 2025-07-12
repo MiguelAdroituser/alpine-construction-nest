@@ -1,5 +1,6 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Res, Patch, Param, Delete } from '@nestjs/common';
 import { PdfService } from './pdf.service';
+import { Response } from 'express';
 
 @Controller('pdf')
 export class PdfController {
