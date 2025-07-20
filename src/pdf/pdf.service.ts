@@ -27,6 +27,21 @@ export class PdfService {
     const browser = await puppeteer.launch({ headless: true }); // ← cambiado
     const page = await browser.newPage();
 
+    const html = this.buildHtml(data);
+
+
+    await page.setContent(html, { waitUntil: 'networkidle0' });
+
+    const pdfBuffer = await page.pdf({
+      format: 'A4',
+      printBackground: true,
+    });
+
+    await browser.close();
+    return pdfBuffer; // ← ahora es Uint8Array, y está bien
+  }
+
+  private buildHtml(data: any): string {
     const html = `
       <!DOCTYPE html>
       <html>
@@ -177,16 +192,7 @@ export class PdfService {
         </body>
       </html>
     `;
-
-
-    await page.setContent(html, { waitUntil: 'networkidle0' });
-
-    const pdfBuffer = await page.pdf({
-      format: 'A4',
-      printBackground: true,
-    });
-
-    await browser.close();
-    return pdfBuffer; // ← ahora es Uint8Array, y está bien
+    return html;
   }
+
 }
