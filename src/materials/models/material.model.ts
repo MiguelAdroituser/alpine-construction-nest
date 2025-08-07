@@ -66,7 +66,25 @@ export class Material extends Document {
 
   @Prop({ required: true })
   layout: string;
+
+  @Prop({ required: true })
+  contractorPrice: number;
+  @Prop({ required: true })
+  retailPrice: number;
+  @Prop({ required: true })
+  totalPrice: number;
+  @Prop({ required: true })
+  differencePrice: number;
+  @Prop({ required: true })
+  profit: number;
   
 }
 
 export const MaterialSchema = (mongoose.models.Material || SchemaFactory.createForClass(Material)) as Model<Material>;
+/* 
+  'contractorPrice',
+  'retailPrice',
+  'totalPrice',
+  'differencePrice',
+  'profit',
+*/

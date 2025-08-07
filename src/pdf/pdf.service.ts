@@ -174,7 +174,7 @@ export class PdfService {
           <h3>${craft.craft}</h3>
           <table class="pricing-table">
             <tr>
-              <td>Total</td>
+              <td>Labor</td>
               <td>$${craft.total.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
             </tr>
           </table>
