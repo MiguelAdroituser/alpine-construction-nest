@@ -28,6 +28,7 @@ export class PdfService {
     // Placeholder logic for generating PDF
 
     // console.log('budget-pdf service', data.areas)
+    console.log('budget-pdf service', data)
 
     // NOTAS:
     // 1.- Realizar sumatoria total por craft (Tile, Paint, etc.)
@@ -36,7 +37,7 @@ export class PdfService {
     /* Crafts of the building. */ //Name of the building (Nombre del proyecto)
     // JSON = [{craft: Tile, total: 12938}, {craft: Paint, total: 12938}, ]
 
-    const craftOfBuilding = Object.values(
+    /* const craftOfBuilding = Object.values(
       data.areas.reduce((acc, item) => {
         if (!acc[item.craft]) {
           acc[item.craft] = { craft: item.craft, total: 0 };
@@ -45,9 +46,42 @@ export class PdfService {
         acc[item.craft].total += item.total;
         return acc;
       }, {} as Record<string, { craft: string; total: number }>)
+    ); */
+
+    const craftOfBuilding = Object.values(
+      data.areas.reduce((acc, item) => {
+        const key = `${item.craft}_${item.type}`; // group by craft + type
+
+        if (!acc[key]) {
+          acc[key] = { craft: item.craft, type: item.type, total: 0 };
+        }
+
+        acc[key].total += item.total;
+
+        return acc;
+      }, {} as Record<string, { craft: string; type: string; total: number }>)
     );
 
-    const grandTotal = craftOfBuilding.reduce((sum, item:any) => sum + item.total, 0);
+    const materialsOfBuilding = data.materials.map(mat => ({
+      item: mat.item,
+      totalPrice: mat.totalPrice
+    }));
+
+    // const grandTotal = craftOfBuilding.reduce((sum, item:any) => sum + item.total, 0);
+    // Sum of labor (craft totals)
+    const laborTotal = craftOfBuilding.reduce((sum, item: any) => sum + item.total, 0);
+
+    // Sum of materials
+    const materialsTotal = materialsOfBuilding.reduce((sum, item: any) => sum + item.totalPrice, 0);
+
+    // Grand total = labor + materials
+    const grandTotal = laborTotal + materialsTotal;
+
+    // Overhead: suma de labor + materials + consumables/equipment * 0.1 (10%)
+    //NOTA: aun no tenemos los consumables/equipment.
+    const overhead = grandTotal * 0.1;
+
+    console.log('materialsOfBuilding', materialsOfBuilding);
 
 
     console.log('craftOfBuilding', craftOfBuilding);
@@ -59,7 +93,7 @@ export class PdfService {
     const browser = await puppeteer.launch({ headless: true }); // ← cambiado
     const page = await browser.newPage();
 
-    const html = this.buildHtml(data, craftOfBuilding, grandTotal);
+    const html = this.buildHtml(data, craftOfBuilding, materialsOfBuilding);
 
 
     await page.setContent(html, { waitUntil: 'networkidle0' });
@@ -73,7 +107,19 @@ export class PdfService {
     return pdfBuffer; // ← ahora es Uint8Array, y está bien
   }
 
-  private buildHtml(data: any, craftOfBuilding: any[], grandTotal: number | any): string {
+  private buildHtml(data: any, craftOfBuilding: any[], materialsOfBuilding: any[]): string {
+    
+    // Calculate grandTotal from craft totals
+    const grandTotal = craftOfBuilding.reduce((sum, craft) => {
+      const material = materialsOfBuilding.find(m => m.item === craft.type);
+      const labor = craft.total;
+      const materialTotal = material ? material.totalPrice : 0;
+      const overhead = (labor + materialTotal) * 0.1;
+      const taxes = (labor + materialTotal + overhead) * 0.08;
+      const craftTotal = labor + materialTotal + overhead + taxes;
+      return sum + craftTotal;
+    }, 0);
+
     const html = `
       <!DOCTYPE html>
       <html>
@@ -170,15 +216,41 @@ export class PdfService {
           </ul>
 
           <h2 class="section-title">Crafts of the Building:</h2>
-          ${craftOfBuilding.map(craft => `
-          <h3>${craft.craft}</h3>
-          <table class="pricing-table">
-            <tr>
-              <td>Labor</td>
-              <td>$${craft.total.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
-            </tr>
-          </table>
-        `).join('')}
+          ${craftOfBuilding.map(craft => {
+            const material = materialsOfBuilding.find(m => m.item === craft.type);
+            const labor = craft.total;
+            const materialTotal = material ? material.totalPrice : 0;
+            const overhead = (labor + materialTotal) * 0.1;
+            const taxes = (labor + materialTotal + overhead) * 0.08;
+            const craftTotal = labor + materialTotal + overhead + taxes;
+
+            return `
+              <h3>${craft.craft}</h3>
+              <table class="pricing-table">
+                <tr>
+                  <td>Labor</td>
+                  <td>$${labor.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                </tr>
+                ${material ? `
+                <tr>
+                  <td>Materials</td>
+                  <td>$${materialTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                </tr>` : ''}
+                <tr>
+                  <td>Overhead (10%)</td>
+                  <td>$${overhead.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                </tr>
+                <tr>
+                  <td>Taxes (8%)</td>
+                  <td>$${taxes.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                </tr>
+                <tr>
+                  <td><strong>Total</strong></td>
+                  <td><strong>$${craftTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</strong></td>
+                </tr>
+              </table>
+            `;
+          }).join('')}
 
         <h3><strong>Grand Total:</strong></h3>
         <table class="pricing-table">

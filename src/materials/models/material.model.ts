@@ -72,6 +72,8 @@ export class Material extends Document {
   @Prop({ required: true })
   retailPrice: number;
   @Prop({ required: true })
+  retailPrice2: number;
+  @Prop({ required: true })
   totalPrice: number;
   @Prop({ required: true })
   differencePrice: number;
