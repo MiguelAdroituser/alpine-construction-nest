@@ -86,6 +86,8 @@ export class PdfService {
 
     console.log('craftOfBuilding', craftOfBuilding);
     console.log('grandTotal', grandTotal);
+    console.log('consumables', data.consumables);
+    
 
     //======================================================
     //======================================================
@@ -110,7 +112,7 @@ export class PdfService {
   private buildHtml(data: any, craftOfBuilding: any[], materialsOfBuilding: any[]): string {
     
     // Calculate grandTotal from craft totals
-    const grandTotal = craftOfBuilding.reduce((sum, craft) => {
+    /* const grandTotal = craftOfBuilding.reduce((sum, craft) => {
       const material = materialsOfBuilding.find(m => m.item === craft.type);
       const labor = craft.total;
       const materialTotal = material ? material.totalPrice : 0;
@@ -118,7 +120,26 @@ export class PdfService {
       const taxes = (labor + materialTotal + overhead) * 0.08;
       const craftTotal = labor + materialTotal + overhead + taxes;
       return sum + craftTotal;
-    }, 0);
+    }, 0); */
+
+    // Calculate grandTotal from craft totals including consumables
+      const grandTotal = craftOfBuilding.reduce((sum, craft) => {
+        const material = materialsOfBuilding.find(m => m.item === craft.type);
+        const consumableItem = data.consumables?.find((c: any) => c.craft === craft.craft);
+
+        const labor = craft.total;
+        const materialTotal = material ? material.totalPrice : 0;
+        const consumables = consumableItem ? Number(consumableItem.consumables) : 0;
+        const equipment = consumableItem ? Number(consumableItem.equipment) : 0;
+        const freight = consumableItem ? Number(consumableItem.freight) : 0;
+
+        const subtotal = labor + materialTotal + consumables + equipment + freight;
+        const overhead = subtotal * 0.1;
+        const taxes = (subtotal + overhead) * 0.08;
+        const craftTotal = subtotal + overhead + taxes;
+
+        return sum + craftTotal;
+      }, 0);
 
     const html = `
       <!DOCTYPE html>
@@ -218,39 +239,58 @@ export class PdfService {
           <h2 class="section-title">Crafts of the Building:</h2>
           ${craftOfBuilding.map(craft => {
             const material = materialsOfBuilding.find(m => m.item === craft.type);
+            const consumableItem = data.consumables?.find((c: any) => c.craft === craft.craft);
+
             const labor = craft.total;
             const materialTotal = material ? material.totalPrice : 0;
-            const overhead = (labor + materialTotal) * 0.1;
-            const taxes = (labor + materialTotal + overhead) * 0.08;
-            const craftTotal = labor + materialTotal + overhead + taxes;
+            const consumables = consumableItem ? Number(consumableItem.consumables) : 0;
+            const equipment = consumableItem ? Number(consumableItem.equipment) : 0;
+            const freight = consumableItem ? Number(consumableItem.freight) : 0;
+
+            const subtotal = labor + materialTotal + consumables + equipment + freight;
+            const overhead = subtotal * 0.1;
+            const taxes = (subtotal + overhead) * 0.08;
+            const craftTotal = subtotal + overhead + taxes;
 
             return `
-              <h3>${craft.craft}</h3>
-              <table class="pricing-table">
-                <tr>
-                  <td>Labor</td>
-                  <td>$${labor.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
-                </tr>
-                ${material ? `
-                <tr>
-                  <td>Materials</td>
-                  <td>$${materialTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
-                </tr>` : ''}
-                <tr>
-                  <td>Overhead (10%)</td>
-                  <td>$${overhead.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
-                </tr>
-                <tr>
-                  <td>Taxes (8%)</td>
-                  <td>$${taxes.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
-                </tr>
-                <tr>
-                  <td><strong>Total</strong></td>
-                  <td><strong>$${craftTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</strong></td>
-                </tr>
-              </table>
-            `;
-          }).join('')}
+            <h3>${craft.craft}</h3>
+            <table class="pricing-table">
+              <tr>
+                <td>Labor</td>
+                <td>$${labor.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+              </tr>
+              ${material ? `
+              <tr>
+                <td>Materials</td>
+                <td>$${materialTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+              </tr>` : ''}
+              <tr>
+                <td>Consumables</td>
+                <td>$${consumables.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+              </tr>
+              <tr>
+                <td>Equipment</td>
+                <td>$${equipment.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+              </tr>
+              <tr>
+                <td>Freight</td>
+                <td>$${freight.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+              </tr>
+              <tr>
+                <td>Overhead (10%)</td>
+                <td>$${overhead.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+              </tr>
+              <tr>
+                <td>Taxes (8%)</td>
+                <td>$${taxes.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+              </tr>
+              <tr>
+                <td><strong>Total</strong></td>
+                <td><strong>$${craftTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</strong></td>
+              </tr>
+            </table>
+          `;
+        }).join('')}
 
         <h3><strong>Grand Total:</strong></h3>
         <table class="pricing-table">
@@ -281,6 +321,13 @@ export class PdfService {
 }
 
 /* 
+${craftOfBuilding.map(craft => {
+            const material = materialsOfBuilding.find(m => m.item === craft.type);
+            const labor = craft.total;
+            const materialTotal = material ? material.totalPrice : 0;
+            const overhead = (labor + materialTotal) * 0.1;
+            const taxes = (labor + materialTotal + overhead) * 0.08;
+            const craftTotal = labor + materialTotal + overhead + taxes;
 
 const html = `
       <!DOCTYPE html>
