@@ -28,7 +28,7 @@ export class PdfService {
     // Placeholder logic for generating PDF
 
     // console.log('budget-pdf service', data.areas)
-    console.log('budget-pdf service', data)
+    // console.log('budget-pdf service', data)
 
     // NOTAS:
     // 1.- Realizar sumatoria total por craft (Tile, Paint, etc.)
@@ -81,12 +81,12 @@ export class PdfService {
     //NOTA: aun no tenemos los consumables/equipment.
     const overhead = grandTotal * 0.1;
 
-    console.log('materialsOfBuilding', materialsOfBuilding);
+    // console.log('materialsOfBuilding', materialsOfBuilding);
 
 
-    console.log('craftOfBuilding', craftOfBuilding);
+    /* console.log('craftOfBuilding', craftOfBuilding);
     console.log('grandTotal', grandTotal);
-    console.log('consumables', data.consumables);
+    console.log('consumables', data.consumables); */
     
 
     //======================================================
