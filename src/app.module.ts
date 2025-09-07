@@ -11,6 +11,8 @@ import { AreasModule } from './areas/areas.module';
 import { CustomersModule } from './customers/customers.module';
 import { ProjectsModule } from './projects/projects.module';
 import { MaterialsModule } from './materials/materials.module';
+import { PdfModule } from './pdf/pdf.module';
+import { ConsumablesModule } from './consumables/consumables.module';
 
 @Module({
   imports: [
@@ -42,6 +44,8 @@ import { MaterialsModule } from './materials/materials.module';
     CustomersModule,
     ProjectsModule,
     MaterialsModule,
+    PdfModule,
+    ConsumablesModule,
     // SessionModule,
   ],
   controllers: [],
