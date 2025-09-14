@@ -1,6 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import * as puppeteer from 'puppeteer';
 
+interface CraftTotal {
+  craft: string;
+  type: string;
+  total: number;
+}
+
 @Injectable()
 export class PdfService {
   /* create(createPdfDto: CreatePdfDto) {
@@ -48,7 +54,9 @@ export class PdfService {
       }, {} as Record<string, { craft: string; total: number }>)
     ); */
 
-    const craftOfBuilding = Object.values(
+    console.log({data})
+
+    /* const craftOfBuilding = Object.values(
       data.areas.reduce((acc, item) => {
         const key = `${item.craft}_${item.type}`; // group by craft + type
 
@@ -60,7 +68,9 @@ export class PdfService {
 
         return acc;
       }, {} as Record<string, { craft: string; type: string; total: number }>)
-    );
+    ); */
+    const craftOfBuilding = this.buildCraftOfBuilding(data.areas, data.designOptions);
+
 
     const materialsOfBuilding = data.materials.map(mat => ({
       item: mat.item,
@@ -69,25 +79,17 @@ export class PdfService {
 
     // const grandTotal = craftOfBuilding.reduce((sum, item:any) => sum + item.total, 0);
     // Sum of labor (craft totals)
-    const laborTotal = craftOfBuilding.reduce((sum, item: any) => sum + item.total, 0);
+    // const laborTotal = craftOfBuilding.reduce((sum, item: any) => sum + item.total, 0);
 
     // Sum of materials
-    const materialsTotal = materialsOfBuilding.reduce((sum, item: any) => sum + item.totalPrice, 0);
+    // const materialsTotal = materialsOfBuilding.reduce((sum, item: any) => sum + item.totalPrice, 0);
 
     // Grand total = labor + materials
-    const grandTotal = laborTotal + materialsTotal;
+    // const grandTotal = laborTotal + materialsTotal;
 
     // Overhead: suma de labor + materials + consumables/equipment * 0.1 (10%)
     //NOTA: aun no tenemos los consumables/equipment.
-    const overhead = grandTotal * 0.1;
-
-    // console.log('materialsOfBuilding', materialsOfBuilding);
-
-
-    /* console.log('craftOfBuilding', craftOfBuilding);
-    console.log('grandTotal', grandTotal);
-    console.log('consumables', data.consumables); */
-    
+    // const overhead = grandTotal * 0.1;
 
     //======================================================
     //======================================================
@@ -110,17 +112,6 @@ export class PdfService {
   }
 
   private buildHtml(data: any, craftOfBuilding: any[], materialsOfBuilding: any[]): string {
-    
-    // Calculate grandTotal from craft totals
-    /* const grandTotal = craftOfBuilding.reduce((sum, craft) => {
-      const material = materialsOfBuilding.find(m => m.item === craft.type);
-      const labor = craft.total;
-      const materialTotal = material ? material.totalPrice : 0;
-      const overhead = (labor + materialTotal) * 0.1;
-      const taxes = (labor + materialTotal + overhead) * 0.08;
-      const craftTotal = labor + materialTotal + overhead + taxes;
-      return sum + craftTotal;
-    }, 0); */
 
     // Calculate grandTotal from craft totals including consumables
       const grandTotal = craftOfBuilding.reduce((sum, craft) => {
@@ -317,6 +308,32 @@ export class PdfService {
     `;
     return html;
   }
+
+  // Assuming budgetData.designOptions comes from frontend
+  buildCraftOfBuilding(
+    areas: any[],
+    designOptions: Record<string, boolean> | undefined
+  ) {
+    // Group and sum as usual
+    const craftTotals = areas.reduce((acc, area) => {
+      const { craft, type, total } = area;
+      if (!acc[craft]) {
+        acc[craft] = { craft, type, total: 0 };
+      }
+      acc[craft].total += total;
+      return acc;
+    }, {} as Record<string, CraftTotal>);
+
+    let result: CraftTotal[] = Object.values(craftTotals);
+
+    // ✅ Apply filter if designOptions exists
+    if (designOptions) {
+      result = result.filter(craftObj => designOptions[craftObj.craft] !== false);
+    }
+
+    return result;
+  }
+
 
 }
 
