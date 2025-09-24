@@ -8,6 +8,42 @@ interface CraftTotal {
   total: number;
 }
 
+const craftDescriptions: Record<string, { paragraph: string, bullets: string[] }> = {
+  Scaffold: {
+    paragraph: `Install Scaffold - All Surfaces to be properly prepared and ready to receive erecting in accordance with manufactures printed instructions.`,
+    bullets: [
+      `Install in accordance with the manufacturer’s directions, use applications and techniques best suited for the type of material being applied. Safety Passing method.`,
+      `Scaffold to be plumb.`,
+      `Remove Snow.`,
+      `Dispose all excess materials off jobsite.`,
+      `Additional scaffold shall be provided for owner use.`,
+    ]
+  },
+  Tile: {
+    paragraph: `Install Tile - Alpine Construction Designs LLC will provide materials, labor, supervision, tools and other necessary items for Install on Floors and Walls. Huntington Senior Center – Huntington.`,
+    bullets: [
+      `All Surfaces Receiving Tile to be properly prepared and ready to receive Install in accordance with manufactures printed instructions. Floors and Walls shall be clean free of dust, grease, oils, or any foreign substance that would interfere with Install.`,
+      `Adequate number of primers, mortar, and grout to be applied for complete coverage.`,
+      `Install in accordance with the manufacturer’s directions, use applications and techniques best suited for the type of material being applied. Apply each material at not less than the manufacturer’s recommended spreading rate. Match approved samples for color texture and coverage.`,
+      `Install all Tiles and Schluter Trims as specified on the Plans.`,
+      `Dispose all excess materials off jobsite.`,
+      `Additional tile shall be provided for owner use.`,
+    ]
+  },
+  Drywall: {
+    paragraph: `Install Drywall - Alpine Construction Designs LLC will provide materials, labor, supervision, tools and other necessary items for Install on Ceilings and Walls. HQ Office – West Valley City.`,
+    bullets: [
+      `All Surfaces Receiving Drywall to be properly prepared and ready to receive Install in accordance with manufactures printed instructions. Walls shall be clean free of dust, grease, oils, or any foreign substance that would interfere with Install.`,
+      `Install in accordance with the manufacturer’s directions, use applications and techniques best suited for the type of material being applied. Apply each material at not less than the manufacturer’s recommended spreading rate. Match approved samples for color texture and coverage.`,
+      `Install all Drywall as specified on the Plans.`,
+      `Dispose all excess materials off jobsite.`,
+      `Additional Drywall shall be provided for owner use.`,
+    ]
+  }
+};
+
+
+
 @Injectable()
 export class PdfService {
   /* create(createPdfDto: CreatePdfDto) {
@@ -170,14 +206,28 @@ export class PdfService {
           <p style="line-height: 0.2;"><strong>Alpine Construction Designs</strong></p>
 
           <h2 class="section-title">1. Proposal Overview</h2>
-          <p>Alpine Construction Designs LLC will provide materials, labor, supervision, tools and other necessary items for Install on Floors and Walls. SVP Livewell Animal Hospital - Herriman.</p>
-          <ul class="list">
-            <li>All Surfaces Receiving Drywall to be properly prepared and ready to receive Install in accordance with manufactures printed instructions. Walls shall be clean free of dust, grease, oils, or any foreign substance that would interfere with Install.</li>
-            <li>Install in accordance with the manufacturer’s directions, use applications and techniques best suited for the type of material being applied. Apply each material at not less than the manufacturer’s recommended spreading rate. Match approved samples for color texture and coverage.</li>
-            <li>Install all Drywall as specified on the Plans.</li>
-            <li>Dispose all excess materials off jobsite.</li>
-            <li>Additional Drywall shall be provided for owner use.</li>
-          </ul>
+
+
+
+
+          ${craftOfBuilding.map(craft => {
+            const desc = this.getCraftDescription(craft.craft);
+
+            return `
+              <h3>${craft.craft}</h3>
+              <p>${desc.paragraph}</p>
+              <ul class="list">
+                ${desc.bullets.map(b => `<li>${b}</li>`).join('')}
+              </ul>
+            `;
+          }).join('')}
+
+
+          
+
+
+
+
 
           <h3 class="section-title">Schedule & Crew Sizes:</h3>
           <ul class="list">
@@ -319,6 +369,133 @@ export class PdfService {
     return html;
   }
 
+  getScaffoldDescription() {
+    return {
+      paragraph: `Install Scaffold - All Surfaces to be properly prepared and ready to receive erecting in accordance with manufactures printed instructions.`,
+      bullets: [
+        `Install in accordance with the manufacturer’s directions, use applications and techniques best suited for the type of material being applied. Safety Passing method.`,
+        `Scaffold to be plumb.`,
+        `Remove Snow.`,
+        `Dispose all excess materials off jobsite.`,
+        `Additional scaffold shall be provided for owner use.`,
+      ]
+    };
+  }
+
+  getTileDescription() {
+    return {
+      paragraph: `Install Tile - Alpine Construction Designs LLC will provide materials, labor, supervision, tools and other necessary items for Install on Floors and Walls. Huntington Senior Center – Huntington.`,
+      bullets: [
+        `All Surfaces Receiving Tile to be properly prepared and ready to receive Install in accordance with manufactures printed instructions. Floors and Walls shall be clean free of dust, grease, oils, or any foreign substance that would interfere with Install.`,
+        `Adequate number of primers, mortar, and grout to be applied for complete coverage.`,
+        `Install in accordance with the manufacturer’s directions, use applications and techniques best suited for the type of material being applied. Apply each material at not less than the manufacturer’s recommended spreading rate. Match approved samples for color texture and coverage.`,
+        `Install all Tiles and Schluter Trims as specified on the Plans.`,
+        `Dispose all excess materials off jobsite.`,
+        `Additional tile shall be provided for owner use.`,
+      ]
+    };
+  }
+
+  getDrywallDescription() {
+    return {
+      paragraph: `Install Drywall - Alpine Construction Designs LLC will provide materials, labor, supervision, tools and other necessary items for Install on Ceilings and Walls. HQ Office – West Valley City.`,
+      bullets: [
+        `All Surfaces Receiving Drywall to be properly prepared and ready to receive Install in accordance with manufactures printed instructions. Walls shall be clean free of dust, grease, oils, or any foreign substance that would interfere with Install.`,
+        `Install in accordance with the manufacturer’s directions, use applications and techniques best suited for the type of material being applied. Apply each material at not less than the manufacturer’s recommended spreading rate. Match approved samples for color texture and coverage.`,
+        `Install all Drywall as specified on the Plans.`,
+        `Dispose all excess materials off jobsite.`,
+        `Additional Drywall shall be provided for owner use.`,
+      ]
+    };
+  }
+
+  getPaintDescription() {
+    return {
+      paragraph: `Install Paint - Alpine Construction Designs LLC will provide labor, supervision, tools and necessary items for painting.`,
+      bullets: [
+        `All surfaces receiving Paint to be properly prepared and ready to receive application in accordance with manufacturer’s printed instructions. Surfaces shall be clean, free of dust, grease, oils, loose particles, or any foreign substances that would interfere with adhesion.`,
+        `Apply Paint in accordance with manufacturer’s directions, using applications and techniques best suited for the type of material being applied. Apply each coat at not less than the manufacturer’s recommended spreading rate. Match approved samples for color, sheen, texture, and coverage.`,
+        `Apply all Paint as specified on the Plans.`,
+        `Dispose of all excess materials off jobsite.`,
+        `Additional Paint shall be provided for owner use.`,
+      ],
+    };
+  }
+
+  getEpoxyDescription() {
+    return {
+      paragraph: `Install Epoxy - Alpine Construction Designs LLC will provide labor, supervision, tools and necessary items for epoxy systems.`,
+      bullets: [
+        `All surfaces receiving Epoxy coating shall be properly prepared and ready to receive application in accordance with manufacturer’s printed instructions. Surfaces shall be cleaned, patched, and free of dust, grease, oils, laitance, or any foreign substances that would interfere with bonding.`,
+        `Install Epoxy in strict compliance with manufacturer’s directions, including mixing ratios, pot life, and application techniques. Apply each coat/system at not less than the manufacturer’s recommended thickness. Match approved samples for color, finish, and performance.`,
+        `Apply all Epoxy systems as specified on the Plans.`,
+        `Dispose of all excess materials off jobsite.`,
+        `Additional Epoxy material shall be provided for owner use.`,
+      ],
+    };
+  }
+
+  getBrickDescription() {
+    return {
+      paragraph: `Install Brick/Masonry - Alpine Construction Designs LLC will provide labor, supervision, tools and necessary items for brickwork and masonry.`,
+      bullets: [
+        `All surfaces receiving Brick/Masonry work shall be properly prepared and ready for installation in accordance with manufacturer’s printed instructions and industry standards. Substrates shall be clean, structurally sound, and free of debris or conditions that would interfere with adhesion or structural bonding.`,
+        `Install Brick/Masonry in accordance with manufacturer’s directions and approved trade practices. Mortar and grout shall be mixed, applied, and tooled as required to achieve uniform appearance, structural integrity, and weather resistance. Match approved samples for color, joint profile, and texture.`,
+        `Install all Brick/Masonry as specified on the Plans.`,
+        `Dispose of all excess materials off jobsite.`,
+        `Additional Brick units shall be provided for owner use.`,
+      ],
+    };
+  }
+
+  getCountertopsDescription() {
+    return {
+      paragraph: `Install Countertops - Alpine Construction Designs LLC will provide labor, supervision, tools and necessary items for countertop installation.`,
+      bullets: [
+        `All surfaces receiving Countertops shall be properly prepared and ready for installation in accordance with manufacturer’s printed instructions. Substrates, supports, and cabinetry shall be clean, level, and structurally sound.`,
+        `Install Countertops in accordance with manufacturer’s directions, using proper adhesives, sealants, and installation techniques best suited for the material specified (stone, quartz, laminate, or solid surface, onyx). Match approved samples for color, veining, and finish. Ensure all seams are tight, level, and properly sealed.`,
+        `Install all Countertops as specified on the Plans.`,
+        `Dispose of all excess materials off jobsite.`,
+        `Additional Countertop material or cutouts shall be provided for owner use.`,
+      ],
+    };
+  }
+
+  getDefaultDescription(craftName: string) {
+    return {
+      paragraph: `Install ${craftName} - Alpine Construction Designs LLC will provide materials, labor, supervision, tools and necessary items.`,
+      bullets: [
+        `All Surfaces Receiving ${craftName} to be properly prepared in accordance with manufactures printed instructions.`,
+        `Install in accordance with the manufacturer’s directions.`,
+        `Dispose all excess materials off jobsite.`,
+        `Additional ${craftName} shall be provided for owner use.`,
+      ]
+    };
+  }
+
+  getCraftDescription(craftName: string) {
+    switch (craftName) {
+      case 'Scaffold':
+        return this.getScaffoldDescription();
+      case 'Tile':
+        return this.getTileDescription();
+      case 'Drywall':
+        return this.getDrywallDescription();
+      case 'Paint':
+        return this.getPaintDescription();
+      case 'Epoxy':
+        return this.getEpoxyDescription();
+      case 'Brick':
+      case 'Masonry':
+        return this.getBrickDescription();
+      case 'Countertops':
+        return this.getCountertopsDescription();
+      default:
+        return this.getDefaultDescription(craftName);
+    }
+  }
+
+
   // Assuming budgetData.designOptions comes from frontend
   buildCraftOfBuilding(
     areas: any[],
@@ -346,6 +523,18 @@ export class PdfService {
 
 
 }
+
+/* 
+
+<p>Alpine Construction Designs LLC will provide materials, labor, supervision, tools and other necessary items for Install on Floors and Walls. SVP Livewell Animal Hospital - Herriman.</p>
+          <ul class="list">
+            <li>All Surfaces Receiving Drywall to be properly prepared and ready to receive Install in accordance with manufactures printed instructions. Walls shall be clean free of dust, grease, oils, or any foreign substance that would interfere with Install.</li>
+            <li>Install in accordance with the manufacturer’s directions, use applications and techniques best suited for the type of material being applied. Apply each material at not less than the manufacturer’s recommended spreading rate. Match approved samples for color texture and coverage.</li>
+            <li>Install all Drywall as specified on the Plans.</li>
+            <li>Dispose all excess materials off jobsite.</li>
+            <li>Additional Drywall shall be provided for owner use.</li>
+          </ul>
+*/
 
 /* 
 ${craftOfBuilding.map(craft => {
