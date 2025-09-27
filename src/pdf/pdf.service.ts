@@ -68,74 +68,19 @@ export class PdfService {
 
   async generatePdfFromHtml(data: any): Promise<Uint8Array> {
 
-    // Placeholder logic for generating PDF
-
-    // console.log('budget-pdf service', data.areas)
-    // console.log('budget-pdf service', data)
-
-    // NOTAS:
-    // 1.- Realizar sumatoria total por craft (Tile, Paint, etc.)
-    // 2.- Realizar la sumatorial final El gran total.
-
-    /* Crafts of the building. */ //Name of the building (Nombre del proyecto)
-    // JSON = [{craft: Tile, total: 12938}, {craft: Paint, total: 12938}, ]
-
-    /* const craftOfBuilding = Object.values(
-      data.areas.reduce((acc, item) => {
-        if (!acc[item.craft]) {
-          acc[item.craft] = { craft: item.craft, total: 0 };
-        }
-        // acc[item.craft].total += item.amount;
-        acc[item.craft].total += item.total;
-        return acc;
-      }, {} as Record<string, { craft: string; total: number }>)
-    ); */
-
     console.log({data})
-
-    /* const craftOfBuilding = Object.values(
-      data.areas.reduce((acc, item) => {
-        const key = `${item.craft}_${item.type}`; // group by craft + type
-
-        if (!acc[key]) {
-          acc[key] = { craft: item.craft, type: item.type, total: 0 };
-        }
-
-        acc[key].total += item.total;
-
-        return acc;
-      }, {} as Record<string, { craft: string; type: string; total: number }>)
-    ); */
+    
     const craftOfBuilding = this.buildCraftOfBuilding(data.areas, data.designOptions);
-
 
     const materialsOfBuilding = data.materials.map(mat => ({
       item: mat.item,
       totalPrice: mat.totalPrice
     }));
 
-    // const grandTotal = craftOfBuilding.reduce((sum, item:any) => sum + item.total, 0);
-    // Sum of labor (craft totals)
-    // const laborTotal = craftOfBuilding.reduce((sum, item: any) => sum + item.total, 0);
-
-    // Sum of materials
-    // const materialsTotal = materialsOfBuilding.reduce((sum, item: any) => sum + item.totalPrice, 0);
-
-    // Grand total = labor + materials
-    // const grandTotal = laborTotal + materialsTotal;
-
-    // Overhead: suma de labor + materials + consumables/equipment * 0.1 (10%)
-    //NOTA: aun no tenemos los consumables/equipment.
-    // const overhead = grandTotal * 0.1;
-
-    //======================================================
-    //======================================================
-
     const browser = await puppeteer.launch({ headless: true }); // ← cambiado
     const page = await browser.newPage();
 
     const html = this.buildHtml(data, craftOfBuilding, materialsOfBuilding);
-
 
     await page.setContent(html, { waitUntil: 'networkidle0' });
 
@@ -149,6 +94,20 @@ export class PdfService {
   }
 
   private buildHtml(data: any, craftOfBuilding: any[], materialsOfBuilding: any[]): string {
+
+    // ✅ Calculate crew size from designOptions
+    /* const crewSize = Object.values(data.designOptions || {}).reduce((sum, option: any) => {
+      if (option.enabled) {
+        return sum + (Number(option.value) || 0);
+      }
+      return sum;
+    }, 0); */
+    const totalDesignOptionValue = Object.entries(
+      data.designOptions as Record<string, { enabled: boolean; value: number }>
+    ).reduce((sum, [, option]) => {
+      return sum + (Number(option.value) || 0);
+    }, 0);
+
 
     // Calculate grandTotal from craft totals including consumables
       const grandTotal = craftOfBuilding.reduce((sum, craft) => {
@@ -207,9 +166,6 @@ export class PdfService {
 
           <h2 class="section-title">1. Proposal Overview</h2>
 
-
-
-
           ${craftOfBuilding.map(craft => {
             const desc = this.getCraftDescription(craft.craft);
 
@@ -222,17 +178,10 @@ export class PdfService {
             `;
           }).join('')}
 
-
-          
-
-
-
-
-
           <h3 class="section-title">Schedule & Crew Sizes:</h3>
           <ul class="list">
             <li>Our proposal is based on forty (40) hour work weeks. All hours over 40 will be billed as overtime.</li>
-            <li>Alpine Construction Designs LLC will plan to use a (2) man crew for the Prep, and Install of Drywall... (Minimum)</li>
+            <li>Alpine Construction Designs LLC will plan to use a ${totalDesignOptionValue} man crew for the Prep, and Install of Drywall... (Minimum)</li>
           </ul>
 
           <h3 class="section-title">Alpine Construction Designs will provide:</h3>
@@ -497,7 +446,7 @@ export class PdfService {
 
 
   // Assuming budgetData.designOptions comes from frontend
-  buildCraftOfBuilding(
+  /* buildCraftOfBuilding(
     areas: any[],
     designOptions: Record<string, boolean> | undefined
   ) {
@@ -519,7 +468,31 @@ export class PdfService {
     }
 
     return result;
+  } */
+
+  buildCraftOfBuilding(
+    areas: any[],
+    designOptions: Record<string, { enabled: boolean; value: number }> | undefined
+  ) {
+    const craftTotals = areas.reduce((acc, area) => {
+      const { craft, type, total } = area;
+      if (!acc[craft]) {
+        acc[craft] = { craft, type, total: 0 };
+      }
+      acc[craft].total += total;
+      return acc;
+    }, {} as Record<string, CraftTotal>);
+
+    let result: CraftTotal[] = Object.values(craftTotals);
+
+    // ✅ Updated filter
+    if (designOptions) {
+      result = result.filter(craftObj => designOptions[craftObj.craft]?.enabled !== false);
+    }
+
+    return result;
   }
+
 
 
 }
