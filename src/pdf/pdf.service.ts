@@ -155,12 +155,13 @@ export class PdfService {
           alt="Company Logo" 
           style="width: 180px; height: auto;" 
           >
-          <p style="margin-bottom: 0; line-height: 0.2;">Tucker Nipko – ${data.projectName}</p>
-          <p style="margin-bottom: 0; line-height: 0.2;">2819 s 5600 w</p>
-          <p style="margin-bottom: 0; line-height: 0.2;">West Valley City, Utah 84120</p>
+          <p style="margin-bottom: 0; line-height: 0.2;">${data.projectName}</p>
+          <p style="margin-bottom: 0; line-height: 0.2;">${data.location}</p>
 
-          <p>Attention: Stout Construction</p>
-          <p>Alpine Construction Designs is pleased to submit a Budgetary estimate for the (Drywall and Taping Applied) of the building Tucker Nipko. The basis of proposal, exceptions and clarifications are detailed in the following and attached pages. Should you have any questions about this proposal please don’t hesitate to contact us – Joel Sanchez at (801) 573-0038</p>
+          <p>Attention: ${data.customerName}</p>
+          <p>${data.address}</p>
+
+          <p>Alpine Construction Designs is pleased to submit a Budgetary estimate for the (Drywall and Taping Applied) of the building ${data.projectName}. The basis of proposal, exceptions and clarifications are detailed in the following and attached pages. Should you have any questions about this proposal please don’t hesitate to contact us – Joel Sanchez at (801) 573-0038</p>
           <p>Regards,</p>
           <p style="line-height: 0.2;"><strong>Alpine Construction Designs</strong></p>
 
@@ -668,5 +669,21 @@ const html = `
         </body>
       </html>
     `;
+
+
+    <img src="http://localhost:3001/images/alpine-logo.png" 
+      alt="Company Logo" 
+      style="width: 180px; height: auto;" 
+      >
+      <p style="margin-bottom: 0; line-height: 0.2;">Tucker Nipko – ${data.projectName}</p>
+      <p style="margin-bottom: 0; line-height: 0.2;">2819 s 5600 w</p>
+      <p style="margin-bottom: 0; line-height: 0.2;">West Valley City, Utah 84120</p>
+
+      <p>Attention: Stout Construction</p>
+      <p>Alpine Construction Designs is pleased to submit a Budgetary estimate for the (Drywall and Taping Applied) of the building Tucker Nipko. The basis of proposal, exceptions and clarifications are detailed in the following and attached pages. Should you have any questions about this proposal please don’t hesitate to contact us – Joel Sanchez at (801) 573-0038</p>
+      <p>Regards,</p>
+      <p style="line-height: 0.2;"><strong>Alpine Construction Designs</strong></p>
+
+      <h2 class="section-title">1. Proposal Overview</h2>
 
 */
