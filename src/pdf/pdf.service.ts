@@ -77,12 +77,21 @@ export class PdfService {
       totalPrice: mat.totalPrice
     }));
 
-    const browser = await puppeteer.launch({ headless: true }); // ← cambiado
+    // const browser = await puppeteer.launch({ headless: true }); // ← cambiado
+    const browser = await puppeteer.launch({
+      headless: true,
+      args: ['--no-sandbox', '--disable-setuid-sandbox']
+    });
+
     const page = await browser.newPage();
 
     const html = this.buildHtml(data, craftOfBuilding, materialsOfBuilding);
 
     await page.setContent(html, { waitUntil: 'networkidle0' });
+
+    await page.waitForSelector('.mermaid svg', {
+      timeout: 10000
+    });
 
     const pdfBuffer = await page.pdf({
       format: 'A4',
@@ -148,7 +157,18 @@ export class PdfService {
 
     const logoPath = path.resolve(__dirname, '../assets/alpine-logo.jpg');
     const logoUrl = `file://${logoPath}`;
+      // 🟦 Build Mermaid Gantt dynamically
+  const ganttDiagram = `
+    gantt
+      title Project Schedule
+      dateFormat YYYY-MM-DD
+      axisFormat %b %d
 
+    ${craftOfBuilding.map((craft, index) => `
+      section ${craft.craft}
+      ${craft.craft} Work :task${index}, ${data.startProject}, ${craft.durationDays ?? 10}d
+    `).join('')}
+    `;
       /* style="display: block; margin: 0 auto; width: 200px; height: 200px; object-fit: contain;" */
 
     const html = `
@@ -156,6 +176,21 @@ export class PdfService {
       <html>
         <head>
           <meta charset="utf-8">
+
+          <!-- 🟦 Mermaid -->
+          <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+          <script>
+            mermaid.initialize({
+              startOnLoad: true,
+              theme: "default",
+              gantt: {
+                barHeight: 18,
+                barGap: 6,
+                fontSize: 12
+              }
+            });
+          </script>
+
           <style>
             body { font-family: Arial, sans-serif; padding-left: 40px; padding-right: 40px; line-height: 1.6; }
             h1 { color: #2c3e50; }
@@ -165,6 +200,13 @@ export class PdfService {
             .pricing-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
             .pricing-table th, .pricing-table td { border: 1px solid #ddd; padding: 8px; text-align: left; }
             .pricing-table th { background-color: #f2f2f2; }
+
+            /* 🟦 PDF-safe */
+            .mermaid {
+              margin-top: 30px;
+              page-break-inside: avoid;
+            }
+
           </style>
          </head> 
         <body>
@@ -252,6 +294,13 @@ export class PdfService {
             and Material Rates</li>
           </ul>
 
+          <!-- 🟦 GANTT DIAGRAM -->
+            <h2 class="section-title">Project Schedule (Gantt)</h2>
+
+            <div class="mermaid">
+          ${ganttDiagram}
+            </div>
+
           <h2 class="section-title">Crafts of the Building:</h2>
           ${craftOfBuilding.map(craft => {
             const material = materialsOfBuilding.find(m => m.item === craft.type);
@@ -328,6 +377,9 @@ export class PdfService {
             <li>We have based our pricing on being provided a secure lay down area on-site for staging of materials, material trailers, tools, and other resources necessary to accomplish the scope of work within the Owner’s Facility.</li>
             <li>Alpine Construction Designs, LLC to follow Install specifications as outlined above as well as manufacturer data sheets.</li>
           </ul>
+
+          <!-- 🗓 Schedule section at the bottom -->
+          <p class="schedule">Schedule: ${new Date(data.startProject).toLocaleDateString('en-GB')} - ${new Date(data.endProject).toLocaleDateString('en-GB')}</p>
         </body>
       </html>
     `;
