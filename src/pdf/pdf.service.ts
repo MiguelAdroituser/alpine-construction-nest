@@ -166,7 +166,7 @@ export class PdfService {
 
     ${craftOfBuilding.map((craft, index) => `
       section ${craft.craft}
-      ${craft.craft} Work :task${index}, ${data.startProject}, ${craft.durationDays ?? 10}d
+      ${craft.craft} Work :task${index}, ${data.startProject}, ${data.endProject}
     `).join('')}
     `;
       /* style="display: block; margin: 0 auto; width: 200px; height: 200px; object-fit: contain;" */
@@ -294,12 +294,7 @@ export class PdfService {
             and Material Rates</li>
           </ul>
 
-          <!-- 🟦 GANTT DIAGRAM -->
-            <h2 class="section-title">Project Schedule (Gantt)</h2>
-
-            <div class="mermaid">
-          ${ganttDiagram}
-            </div>
+          
 
           <h2 class="section-title">Crafts of the Building:</h2>
           ${craftOfBuilding.map(craft => {
@@ -377,6 +372,13 @@ export class PdfService {
             <li>We have based our pricing on being provided a secure lay down area on-site for staging of materials, material trailers, tools, and other resources necessary to accomplish the scope of work within the Owner’s Facility.</li>
             <li>Alpine Construction Designs, LLC to follow Install specifications as outlined above as well as manufacturer data sheets.</li>
           </ul>
+
+          <!-- 🟦 GANTT DIAGRAM -->
+            <h2 class="section-title">Project Schedule (Gantt)</h2>
+
+            <div class="mermaid">
+          ${ganttDiagram}
+            </div>
 
           <!-- 🗓 Schedule section at the bottom -->
           <p class="schedule">Schedule: ${new Date(data.startProject).toLocaleDateString('en-GB')} - ${new Date(data.endProject).toLocaleDateString('en-GB')}</p>
