@@ -15,11 +15,8 @@ export class AuthController {
     @Post('login')
     @HttpCode(200)
     async login(@Body() data: User) {
-        console.log('endpoint auth backend');
 
         const user = await this.userService.getUser(data);
-
-        console.log('endpoint auth backend');
 
         if (user) {
             // Genera el token de acceso (JWT) utilizando el userId
@@ -32,7 +29,7 @@ export class AuthController {
             // await this.sessionsService.createSession(user._id, accessToken, 'http');
             // await this.sessionsService.createSession(userIdString, accessToken, 'http');
 
-            console.log({user})
+            // console.log({user})
 
             const { isAdmin, username } = user;
             // Devuelve el accessToken y el userId
@@ -61,14 +58,14 @@ export class AuthController {
         try {
             const createdUser = await this.userService.createUser(createUserDto);
             return { username: createdUser.username };
-        } catch (error) {
+        } catch (error:any) {
             // Handle duplicate username error (MongoDB error code 11000)
-            if (error.code === 11000) {
+            if (error?.code === 11000) {
             throw new ConflictException('Username already exists');
             }
             
             // Handle validation errors (like missing required fields)
-            if (error.name === 'ValidationError') {
+            if (error?.name === 'ValidationError') {
             throw new BadRequestException(error.message);
             }
             

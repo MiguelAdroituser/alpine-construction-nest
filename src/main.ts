@@ -1,11 +1,8 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import * as cors from 'cors';
 import 'dotenv/config';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.interface';
-// import { IoAdapter } from '@nestjs/platform-socket.io';
-
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -32,7 +29,7 @@ async function bootstrap() {
 
   SwaggerModule.setup('api/explorer', app, document);
 
-  const port = process.env.PORT || 3000;
+  const port = process.env.PORT || 3001;
   await app.listen(port);
 
   console.log(`API is running on: http://localhost:${port}`);
