@@ -3,8 +3,8 @@ import { Module } from '@nestjs/common';
 import { MongooseModule, MongooseModuleOptions } from '@nestjs/mongoose';
 import { AuthModule } from './modules/auth/auth.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { ServeStaticModule } from '@nestjs/serve-static';
-import { join } from 'path';
+// import { ServeStaticModule } from '@nestjs/serve-static';
+// import { join } from 'path';
 
 // import { SessionModule } from './modules/session/session.module';
 import { EnvConfiguration } from './config/app.config';
@@ -39,9 +39,9 @@ import { ConsumablesModule } from './consumables/consumables.module';
     MongooseModule.forRoot( process.env.MONGODB, {
       dbName: 'clientsbudgets'
     }),
-    ServeStaticModule.forRoot({
+    /* ServeStaticModule.forRoot({ //commented to use the app in kubernetes and frontend in the same domain
       rootPath: join(__dirname, '..', 'public'),
-    }),
+    }), */
     // MealModule,
     AuthModule,
     CraftsModule,
