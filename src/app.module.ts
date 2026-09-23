@@ -15,6 +15,7 @@ import { ProjectsModule } from './projects/projects.module';
 import { MaterialsModule } from './materials/materials.module';
 import { PdfModule } from './pdf/pdf.module';
 import { ConsumablesModule } from './consumables/consumables.module';
+import { HealthModule } from './health/health.module';
 
 @Module({
   imports: [
@@ -51,6 +52,7 @@ import { ConsumablesModule } from './consumables/consumables.module';
     MaterialsModule,
     PdfModule,
     ConsumablesModule,
+    HealthModule
     // SessionModule,
   ],
   controllers: [],
